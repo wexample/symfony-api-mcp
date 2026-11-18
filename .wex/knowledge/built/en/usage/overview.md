@@ -59,9 +59,11 @@ final readonly class PeopleTools
 
 `bin/console debug:mcp` lists what a server exposes.
 
-## On the api's page
+## Its page
 
-symfony-api's page, `/api/`, ends on the MCP server for whoever reads the whole documentation (not a preview): its address, the command adding it to an agent (`claude mcp add --transport http …`), and each tool — its title, description, arguments, read-only or not.
+The MCP server has its own page, `/api/doc/mcp`, beside symfony-api's `/api/`, which the application's menu leads to: its address, the command adding it to an agent (`claude mcp add --transport http …`, the token in its header), and each tool — its title, description, arguments, read-only or not. It is read by whoever reads the whole of the api's documentation (`documentation.access_role`).
+
+An application loading its bundles' controllers (`routing.controllers`) has the page already; one naming them imports `@WexampleSymfonyApiMcpBundle/Controller/` (type `attribute`). Like Swagger UI, the page sits under `/api/doc`, which the application keeps off its token firewall: `^/api/(?!$|doc)`.
 
 ## Signed in
 
