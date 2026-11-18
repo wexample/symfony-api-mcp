@@ -3,7 +3,6 @@ en:
   page_icon: 'ph:bold/plugs-connected'
 
   intro: 'For agents: the api as the tools of an MCP server, over HTTP, signed as any api call.'
-  api: 'API'
   section_endpoint: 'Endpoint'
   authentication: 'Signed with an account''s api token, in the Authorization header, as the api is.'
   section_tools: 'Tools'
@@ -19,7 +18,6 @@ fr:
   page_icon: 'ph:bold/plugs-connected'
 
   intro: 'Pour les agents : l''api en outils d''un serveur MCP, en HTTP, authentifiée comme tout appel à l''api.'
-  api: 'API'
   section_endpoint: 'Point d''accès'
   authentication: 'Authentifié par le token d''api d''un compte, dans l''en-tête Authorization, comme l''api.'
   section_tools: 'Outils'

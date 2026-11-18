@@ -41,10 +41,6 @@ class McpServerTest extends WebTestCase
     {
         $documentation = self::getContainer()->get('test.mcp_documentation');
 
-        // Led to from the api's page, but not from a preview of it.
-        $this->assertNull($documentation->getLink(preview: true));
-        $this->assertSame('/api/doc/mcp', $documentation->getLink(preview: false)['href']);
-
         $server = $documentation->describe();
         $this->assertStringEndsWith('/api/mcp', $server['url']);
         $this->assertStringContainsString('claude mcp add --transport http', $server['command']);

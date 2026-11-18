@@ -4,11 +4,6 @@
     then the tools it finds there. `server`: url, command, tools
     (McpDocumentationService::describe). -#}
 
-{#- Back to the api's operations, which the server's tools stand beside. -#}
-{%- block page_toolbar_right -%}
-    {{ button_link('ph:bold/code', '@page::api' | trans, path('api_index'), { class: 'button--flat' }) }}
-{%- endblock -%}
-
 {%- block page_body -%}
     <p class="lead">{{ '@page::intro' | trans }}</p>
 

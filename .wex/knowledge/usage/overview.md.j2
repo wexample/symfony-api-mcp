@@ -61,7 +61,7 @@ final readonly class PeopleTools
 
 ## Its page
 
-The MCP server has its own page, `/api/doc/mcp`, beside symfony-api's `/api/`, whose toolbar leads to it: its address, the command adding it to an agent (`claude mcp add --transport http …`, the token in its header), and each tool — its title, description, arguments, read-only or not. It is read by whoever reads the whole of the api's documentation (`documentation.access_role`); a preview's reader neither sees the button nor opens the page.
+The MCP server has its own page, `/api/doc/mcp`, beside symfony-api's `/api/`, which the application's menu leads to: its address, the command adding it to an agent (`claude mcp add --transport http …`, the token in its header), and each tool — its title, description, arguments, read-only or not. It is read by whoever reads the whole of the api's documentation (`documentation.access_role`).
 
 An application loading its bundles' controllers (`routing.controllers`) has the page already; one naming them imports `@WexampleSymfonyApiMcpBundle/Controller/` (type `attribute`). Like Swagger UI, the page sits under `/api/doc`, which the application keeps off its token firewall: `^/api/(?!$|doc)`.
 
