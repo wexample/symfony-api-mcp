@@ -7,14 +7,16 @@ use Mcp\Schema\Tool;
 use Mcp\Server;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Wexample\SymfonyApi\Interface\ApiDocumentationSectionInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Wexample\SymfonyApi\Interface\ApiDocumentationSectionLinkInterface;
 use Wexample\SymfonyApiMcp\DependencyInjection\WexampleSymfonyApiMcpExtension;
 
 /**
  * The api's page says how an agent reaches the MCP server and which tools it
- * finds there — to the readers of the whole documentation, not a preview's.
+ * finds there — to the readers of the whole documentation, not a preview's —,
+ * reached from the page's toolbar as well.
  */
-final readonly class McpDocumentationSection implements ApiDocumentationSectionInterface
+final readonly class McpDocumentationSection implements ApiDocumentationSectionLinkInterface
 {
     public function __construct(
         // Built first: its builder is what fills the registry.
@@ -23,7 +25,21 @@ final readonly class McpDocumentationSection implements ApiDocumentationSectionI
         #[Autowire(service: 'mcp.server.' . WexampleSymfonyApiMcpExtension::SERVER . '.registry')]
         private RegistryInterface $registry,
         private UrlGeneratorInterface $urlGenerator,
+        private TranslatorInterface $translator,
     ) {
+    }
+
+    public function getAnchor(): string
+    {
+        return 'mcp';
+    }
+
+    public function getLink(): array
+    {
+        return [
+            'icon' => 'ph:bold/plugs-connected',
+            'label' => $this->translator->trans('mcp.link', [], 'WexampleSymfonyApiMcpBundle'),
+        ];
     }
 
     public function isShown(bool $preview): bool

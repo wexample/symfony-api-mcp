@@ -1,32 +1,42 @@
 {#- The MCP server on the api's page: where an agent connects, the tools it
-    finds there. `section`: url, command, tools. -#}
-<h2 class="api-doc--group">MCP</h2>
+    finds there. `section`: url, command, tools. Its anchor, `mcp`, is the
+    one the page's toolbar leads to (McpDocumentationSection::getAnchor). -#}
+{%- set domain = 'WexampleSymfonyApiMcpBundle' -%}
+<h2 id="mcp">MCP</h2>
 <section class="doc-section">
     <div class="doc-section--description">
-        <p>{{ 'mcp.intro' | trans({}, 'WexampleSymfonyApiMcpBundle') }}</p>
+        <p>{{ 'mcp.intro' | trans({}, domain) }}</p>
         <p><code>{{ section.url }}</code></p>
-        {%- if section.tools is not empty %}
-            <table class="api-doc--table">
-                {%- for tool in section.tools %}
-                    <tr>
-                        <td><code>{{ tool.name }}</code>{% if tool.readOnly %} <span class="api-doc--meta">{{ 'mcp.read_only' | trans({}, 'WexampleSymfonyApiMcpBundle') }}</span>{% endif %}</td>
-                        <td>
-                            {%- if tool.title %}<strong>{{ tool.title }}</strong><br>{% endif %}
-                            {{ tool.description | nl2br }}
-                            {%- if tool.arguments is not empty %}
-                                <ul>
-                                    {%- for argument in tool.arguments %}
-                                        <li><code>{{ argument.name }}</code>{% if argument.required %} <span class="api-doc--required">*</span>{% endif %} <span class="api-doc--meta">{{ argument.type }}</span> {{ argument.description }}</li>
-                                    {%- endfor %}
-                                </ul>
-                            {%- endif %}
-                        </td>
-                    </tr>
-                {%- endfor %}
-            </table>
-        {%- endif %}
     </div>
     <div class="doc-section--code">
         {{ include('@WexampleSymfonyDesignSystemBundle/components/code-block/code-block.html.twig', { lang: 'bash', code: section.command }) }}
     </div>
 </section>
+
+{#- The tools, the whole width: their words are long. -#}
+{%- if section.tools is not empty %}
+    {%- set rows = [] -%}
+    {%- for tool in section.tools -%}
+        {%- set description -%}
+            {%- if tool.title %}<strong>{{ tool.title }}</strong><br>{% endif -%}
+            {{ tool.description | nl2br }}
+            {%- if tool.arguments is not empty %}
+                <ul>
+                    {%- for argument in tool.arguments %}
+                        <li><code>{{ argument.name }}</code> <span class="text-secondary">{{ argument.type }}{% if argument.required %} · {{ 'mcp.required' | trans({}, domain) }}{% endif %}</span> {{ argument.description }}</li>
+                    {%- endfor %}
+                </ul>
+            {%- endif %}
+        {%- endset -%}
+        {%- set rows = rows | merge([{
+            name: tool.name,
+            read_only: tool.readOnly ? { type: 'neutral', label: 'mcp.read_only' | trans({}, domain) } : null,
+            description: description,
+        }]) -%}
+    {%- endfor -%}
+    {{ data_table([
+        { key: 'name', label: 'mcp.column.tool' | trans({}, domain), cell: 'code' },
+        { key: 'read_only', label: '', cell: 'status' },
+        { key: 'description', label: 'mcp.column.description' | trans({}, domain), cell: 'html' },
+    ], rows, { fill: true }) }}
+{%- endif %}
