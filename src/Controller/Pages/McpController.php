@@ -17,14 +17,16 @@ use Wexample\SymfonyLoader\Controller\AbstractPagesController;
  * Under /api/doc/, which the application keeps off its token firewall, as it
  * does Swagger UI.
  */
-#[Route(path: 'api/doc/mcp', name: 'api_doc_mcp_')]
 final class McpController extends AbstractPagesController
 {
     use SymfonyApiMcpBundleClassTrait;
 
-    final public const ROUTE_INDEX = 'api_doc_mcp_' . VariableHelper::INDEX;
+    /**
+     * Named as Swagger UI's beside it, `api_doc_swagger`.
+     */
+    final public const string ROUTE_INDEX = 'api_doc_mcp';
 
-    #[Route(name: VariableHelper::INDEX)]
+    #[Route(path: 'api/doc/mcp', name: self::ROUTE_INDEX)]
     public function index(
         ApiDocumentationService $documentation,
         McpDocumentationService $mcp,
