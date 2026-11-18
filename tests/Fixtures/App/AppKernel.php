@@ -6,8 +6,8 @@ use Symfony\AI\McpBundle\McpBundle;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Wexample\SymfonyApiMcp\WexampleSymfonyApiMcpBundle;
 use Wexample\SymfonyLoader\WexampleSymfonyLoaderBundle;
-use Wexample\SymfonyTranslations\WexampleSymfonyTranslationsBundle;
 use Wexample\SymfonyTesting\Tests\Fixtures\AbstractFixtureKernel;
+use Wexample\SymfonyTranslations\WexampleSymfonyTranslationsBundle;
 
 class AppKernel extends AbstractFixtureKernel
 {
