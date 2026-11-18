@@ -1,0 +1,3 @@
+mcp:
+  intro: 'Pour les agents : la même api, en outils d''un serveur MCP, en HTTP, authentifiée comme tout appel à l''api.'
+  read_only: 'lecture seule'

@@ -1,0 +1,32 @@
+{#- The MCP server on the api's page: where an agent connects, the tools it
+    finds there. `section`: url, command, tools. -#}
+<h2 class="api-doc--group">MCP</h2>
+<section class="doc-section">
+    <div class="doc-section--description">
+        <p>{{ 'mcp.intro' | trans({}, 'WexampleSymfonyApiMcpBundle') }}</p>
+        <p><code>{{ section.url }}</code></p>
+        {%- if section.tools is not empty %}
+            <table class="api-doc--table">
+                {%- for tool in section.tools %}
+                    <tr>
+                        <td><code>{{ tool.name }}</code>{% if tool.readOnly %} <span class="api-doc--meta">{{ 'mcp.read_only' | trans({}, 'WexampleSymfonyApiMcpBundle') }}</span>{% endif %}</td>
+                        <td>
+                            {%- if tool.title %}<strong>{{ tool.title }}</strong><br>{% endif %}
+                            {{ tool.description | nl2br }}
+                            {%- if tool.arguments is not empty %}
+                                <ul>
+                                    {%- for argument in tool.arguments %}
+                                        <li><code>{{ argument.name }}</code>{% if argument.required %} <span class="api-doc--required">*</span>{% endif %} <span class="api-doc--meta">{{ argument.type }}</span> {{ argument.description }}</li>
+                                    {%- endfor %}
+                                </ul>
+                            {%- endif %}
+                        </td>
+                    </tr>
+                {%- endfor %}
+            </table>
+        {%- endif %}
+    </div>
+    <div class="doc-section--code">
+        {{ include('@WexampleSymfonyDesignSystemBundle/components/code-block/code-block.html.twig', { lang: 'bash', code: section.command }) }}
+    </div>
+</section>

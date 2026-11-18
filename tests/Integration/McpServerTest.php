@@ -37,6 +37,17 @@ class McpServerTest extends WebTestCase
         $this->assertSame('Hello Ada.', $call['result']['content'][0]['text']);
     }
 
+    public function testTheApiPageSaysWhereAndWhichTools(): void
+    {
+        $section = self::getContainer()->get('test.mcp_documentation_section');
+
+        $this->assertFalse($section->isShown(preview: true));
+        $context = $section->getContext(preview: false);
+        $this->assertStringEndsWith('/api/mcp', $context['url']);
+        $this->assertStringContainsString('claude mcp add --transport http', $context['command']);
+        $this->assertSame([['name' => 'name', 'type' => 'string', 'required' => true, 'description' => 'Who to greet']], $context['tools'][0]['arguments']);
+    }
+
     private function rpc(string $method, array $params = [], bool $notification = false): ?array
     {
         $message = ['jsonrpc' => '2.0', 'method' => $method] + ([] === $params ? [] : ['params' => $params]) + ($notification ? [] : ['id' => uniqid()]);

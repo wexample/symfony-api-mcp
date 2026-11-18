@@ -58,3 +58,11 @@ final readonly class PeopleTools
 - Few tools named for what an agent wants to do read better than one per route: an agent picks among their descriptions.
 
 `bin/console debug:mcp` lists what a server exposes.
+
+## On the api's page
+
+symfony-api's page, `/api/`, ends on the MCP server for whoever reads the whole documentation (not a preview): its address, the command adding it to an agent (`claude mcp add --transport http …`), and each tool — its title, description, arguments, read-only or not.
+
+## Signed in
+
+`/api/mcp` is behind the api's firewall: an agent sends the account's token (`Authorization: Bearer …`, symfony-api's user tokens), and the access rules of `^/api/` apply — an api kept to the administrators keeps its MCP server to them.

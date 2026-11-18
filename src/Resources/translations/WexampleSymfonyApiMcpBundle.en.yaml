@@ -1,0 +1,3 @@
+mcp:
+  intro: 'For agents: the same api as tools of an MCP server, over HTTP, signed as any api call.'
+  read_only: 'read only'

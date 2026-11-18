@@ -1,0 +1,7 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # The MCP server on the api's page (symfony-api).
+    Wexample\SymfonyApiMcp\Service\McpDocumentationSection: ~
