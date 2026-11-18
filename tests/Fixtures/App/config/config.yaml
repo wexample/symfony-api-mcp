@@ -1,0 +1,7 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  Wexample\SymfonyApiMcp\Tests\Fixtures\App\Tool\:
+    resource: '../Tool/'

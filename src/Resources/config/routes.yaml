@@ -1,0 +1,4 @@
+# The MCP endpoint, /api/mcp: import from the application's routes.
+wexample_symfony_api_mcp:
+    resource: .
+    type: mcp
