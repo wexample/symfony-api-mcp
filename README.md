@@ -1,6 +1,6 @@
 # symfony-api-mcp
 
-Version: 2.0.0
+Version: 3.0.0
 
 The application's api as an MCP server, at /api/mcp, its tools declared on services
 
