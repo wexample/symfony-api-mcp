@@ -1,0 +1,58 @@
+{%- extends '@front/layouts/private/layout.html.twig' -%}
+
+{#- The MCP server, beside the api's page: where an agent connects and how,
+    then the tools it finds there. `server`: url, command, tools
+    (McpDocumentationService::describe). -#}
+
+{#- Back to the api's operations, which the server's tools stand beside. -#}
+{%- block page_toolbar_right -%}
+    {{ button_link('ph:bold/code', '@page::api' | trans, path('api_index'), { class: 'button--flat' }) }}
+{%- endblock -%}
+
+{%- block page_body -%}
+    <p class="lead">{{ '@page::intro' | trans }}</p>
+
+    <div class="doc">
+        <section class="doc-section">
+            <div class="doc-section--description">
+                <h3>{{ '@page::section_endpoint' | trans }}</h3>
+                <p><code>{{ server.url }}</code></p>
+                <p class="text-secondary">{{ '@page::authentication' | trans }}</p>
+            </div>
+            <div class="doc-section--code">
+                {{ include('@WexampleSymfonyDesignSystemBundle/components/code-block/code-block.html.twig', { lang: 'bash', code: server.command }) }}
+            </div>
+        </section>
+
+        <h2>{{ '@page::section_tools' | trans }}</h2>
+        {%- if server.tools is empty %}
+            <p class="empty">{{ '@page::no_tools' | trans }}</p>
+        {%- else %}
+            {#- The whole width: their words are long. -#}
+            {%- set rows = [] -%}
+            {%- for tool in server.tools -%}
+                {%- set description -%}
+                    {%- if tool.title %}<strong>{{ tool.title }}</strong><br>{% endif -%}
+                    {{ tool.description | nl2br }}
+                    {%- if tool.arguments is not empty %}
+                        <ul>
+                            {%- for argument in tool.arguments %}
+                                <li><code>{{ argument.name }}</code> <span class="text-secondary">{{ argument.type }}{% if argument.required %} · {{ '@page::required' | trans }}{% endif %}</span> {{ argument.description }}</li>
+                            {%- endfor %}
+                        </ul>
+                    {%- endif %}
+                {%- endset -%}
+                {%- set rows = rows | merge([{
+                    name: tool.name,
+                    read_only: tool.readOnly ? { type: 'neutral', label: '@page::read_only' | trans } : null,
+                    description: description,
+                }]) -%}
+            {%- endfor -%}
+            {{ data_table([
+                { key: 'name', label: '@page::column.tool' | trans, cell: 'code' },
+                { key: 'read_only', label: '', cell: 'status' },
+                { key: 'description', label: '@page::column.description' | trans, cell: 'html' },
+            ], rows, { fill: true, scroll: true }) }}
+        {%- endif %}
+    </div>
+{%- endblock -%}

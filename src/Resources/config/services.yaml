@@ -3,5 +3,10 @@ services:
         autowire: true
         autoconfigure: true
 
-    # The MCP server on the api's page (symfony-api).
-    Wexample\SymfonyApiMcp\Service\McpDocumentationSection: ~
+    # The MCP server's page, beside the api's (symfony-api), and the button
+    # leading to it.
+    Wexample\SymfonyApiMcp\Controller\:
+        resource: '../../Controller/*'
+        tags: ['controller.service_arguments']
+
+    Wexample\SymfonyApiMcp\Service\McpDocumentationService: ~

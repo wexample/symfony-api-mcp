@@ -8,15 +8,16 @@ use Mcp\Server;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Wexample\SymfonyApi\Interface\ApiDocumentationSectionLinkInterface;
+use Wexample\SymfonyApi\Interface\ApiDocumentationLinkInterface;
+use Wexample\SymfonyApiMcp\Controller\Pages\McpController;
 use Wexample\SymfonyApiMcp\DependencyInjection\WexampleSymfonyApiMcpExtension;
 
 /**
- * The api's page says how an agent reaches the MCP server and which tools it
- * finds there — to the readers of the whole documentation, not a preview's —,
- * reached from the page's toolbar as well.
+ * What the MCP server's page says — where an agent connects, how, and the
+ * tools it finds there —, and the button leading to that page from the api's,
+ * for the readers of the whole documentation, not a preview's.
  */
-final readonly class McpDocumentationSection implements ApiDocumentationSectionLinkInterface
+final readonly class McpDocumentationService implements ApiDocumentationLinkInterface
 {
     public function __construct(
         // Built first: its builder is what fills the registry.
@@ -29,30 +30,19 @@ final readonly class McpDocumentationSection implements ApiDocumentationSectionL
     ) {
     }
 
-    public function getAnchor(): string
+    public function getLink(bool $preview): ?array
     {
-        return 'mcp';
-    }
-
-    public function getLink(): array
-    {
-        return [
+        return $preview ? null : [
             'icon' => 'ph:bold/plugs-connected',
             'label' => $this->translator->trans('mcp.link', [], 'WexampleSymfonyApiMcpBundle'),
+            'href' => $this->urlGenerator->generate(McpController::ROUTE_INDEX),
         ];
     }
 
-    public function isShown(bool $preview): bool
-    {
-        return ! $preview;
-    }
-
-    public function getTemplate(): string
-    {
-        return '@WexampleSymfonyApiMcp/documentation_section.html.twig';
-    }
-
-    public function getContext(bool $preview): array
+    /**
+     * @return array{url: string, command: string, tools: list<array<string, mixed>>}
+     */
+    public function describe(): array
     {
         $url = $this->urlGenerator->generate('_mcp_endpoint_' . WexampleSymfonyApiMcpExtension::SERVER, [], UrlGeneratorInterface::ABSOLUTE_URL);
         $tools = array_values($this->registry->getTools()->references);
@@ -60,7 +50,12 @@ final readonly class McpDocumentationSection implements ApiDocumentationSectionL
 
         return [
             'url' => $url,
-            'command' => sprintf("claude mcp add --transport http %s %s", basename(parse_url($url, PHP_URL_HOST) ?: 'api'), $url),
+            // Signed as any api call: an account's token, in the header.
+            'command' => sprintf(
+                "claude mcp add --transport http %s \\\n  %s \\\n  --header 'Authorization: Bearer \$TOKEN'",
+                explode('.', parse_url($url, PHP_URL_HOST) ?: 'api')[0],
+                $url
+            ),
             'tools' => array_map(static fn (Tool $tool) => [
                 'name' => $tool->name,
                 'title' => $tool->annotations?->title ?? $tool->title,

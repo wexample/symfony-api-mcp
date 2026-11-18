@@ -1366,6 +1366,39 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         }>,
  *     }>,
  * }
+ * @psalm-type WexampleSymfonyLoaderConfig = array{
+ *     tsconfig_path?: scalar|Param|null, // Default: null
+ *     default_color_scheme?: scalar|Param|null, // Default: null
+ *     develop_toolbar?: bool|Param, // Default: false
+ *     themes?: array<string, list<scalar|Param|null>>,
+ *     date_locale?: scalar|Param|null, // Default: null
+ *     front_paths?: array<string, scalar|Param|null>,
+ *     layout_bases?: array<string, array{ // Default: []
+ *         page_manager_component?: scalar|Param|null, // Default: null
+ *     }>,
+ * }
+ * @psalm-type WexampleSymfonyTranslationsConfig = array{
+ *     translations_paths?: list<scalar|Param|null>,
+ *     content_locales?: list<scalar|Param|null>,
+ *     storage?: scalar|Param|null, // Default: null
+ *     locale_routing?: bool|array{
+ *         enabled?: bool|Param, // Default: false
+ *         excluded_paths?: list<scalar|Param|null>,
+ *     },
+ *     locale_cookie?: bool|array{
+ *         enabled?: bool|Param, // Default: false
+ *     },
+ *     strict?: bool|Param|null, // Default: null
+ *     syrtis?: bool|array{
+ *         enabled?: bool|Param, // Default: false
+ *         host?: scalar|Param|null, // Default: "https://api.syrtis.ai"
+ *         api_key?: scalar|Param|null,
+ *         session_secure_id?: scalar|Param|null,
+ *         max_batch_length?: int|Param, // Default: 6000
+ *         timeout?: int|Param, // Default: 180
+ *         connect_timeout?: int|Param, // Default: 10
+ *     },
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1375,6 +1408,8 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     twig?: TwigConfig,
  *     security?: SecurityConfig,
  *     mcp?: McpConfig,
+ *     wexample_symfony_loader?: WexampleSymfonyLoaderConfig,
+ *     wexample_symfony_translations?: WexampleSymfonyTranslationsConfig,
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,

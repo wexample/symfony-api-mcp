@@ -37,15 +37,19 @@ class McpServerTest extends WebTestCase
         $this->assertSame('Hello Ada.', $call['result']['content'][0]['text']);
     }
 
-    public function testTheApiPageSaysWhereAndWhichTools(): void
+    public function testThePageSaysWhereHowAndWhichTools(): void
     {
-        $section = self::getContainer()->get('test.mcp_documentation_section');
+        $documentation = self::getContainer()->get('test.mcp_documentation');
 
-        $this->assertFalse($section->isShown(preview: true));
-        $context = $section->getContext(preview: false);
-        $this->assertStringEndsWith('/api/mcp', $context['url']);
-        $this->assertStringContainsString('claude mcp add --transport http', $context['command']);
-        $this->assertSame([['name' => 'name', 'type' => 'string', 'required' => true, 'description' => 'Who to greet']], $context['tools'][0]['arguments']);
+        // Led to from the api's page, but not from a preview of it.
+        $this->assertNull($documentation->getLink(preview: true));
+        $this->assertSame('/api/doc/mcp', $documentation->getLink(preview: false)['href']);
+
+        $server = $documentation->describe();
+        $this->assertStringEndsWith('/api/mcp', $server['url']);
+        $this->assertStringContainsString('claude mcp add --transport http', $server['command']);
+        $this->assertStringContainsString("--header 'Authorization: Bearer \$TOKEN'", $server['command']);
+        $this->assertSame([['name' => 'name', 'type' => 'string', 'required' => true, 'description' => 'Who to greet']], $server['tools'][0]['arguments']);
     }
 
     private function rpc(string $method, array $params = [], bool $notification = false): ?array

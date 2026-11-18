@@ -6,6 +6,6 @@ services:
   Wexample\SymfonyApiMcp\Tests\Fixtures\App\Tool\:
     resource: '../Tool/'
 
-  test.mcp_documentation_section:
-    alias: Wexample\SymfonyApiMcp\Service\McpDocumentationSection
+  test.mcp_documentation:
+    alias: Wexample\SymfonyApiMcp\Service\McpDocumentationService
     public: true

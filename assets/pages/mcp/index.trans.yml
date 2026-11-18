@@ -1,0 +1,31 @@
+en:
+  page_title: 'MCP server'
+  page_icon: 'ph:bold/plugs-connected'
+
+  intro: 'For agents: the api as the tools of an MCP server, over HTTP, signed as any api call.'
+  api: 'API'
+  section_endpoint: 'Endpoint'
+  authentication: 'Signed with an account''s api token, in the Authorization header, as the api is.'
+  section_tools: 'Tools'
+  no_tools: 'No tool declared yet: the application declares them on its services (#[McpTool]).'
+  read_only: 'read only'
+  required: 'required'
+  column:
+    tool: 'Tool'
+    description: 'Description'
+
+fr:
+  page_title: 'Serveur MCP'
+  page_icon: 'ph:bold/plugs-connected'
+
+  intro: 'Pour les agents : l''api en outils d''un serveur MCP, en HTTP, authentifiée comme tout appel à l''api.'
+  api: 'API'
+  section_endpoint: 'Point d''accès'
+  authentication: 'Authentifié par le token d''api d''un compte, dans l''en-tête Authorization, comme l''api.'
+  section_tools: 'Outils'
+  no_tools: 'Aucun outil déclaré pour l''instant : l''application les déclare sur ses services (#[McpTool]).'
+  read_only: 'lecture seule'
+  required: 'requis'
+  column:
+    tool: 'Outil'
+    description: 'Description'
