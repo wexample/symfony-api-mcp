@@ -25,9 +25,9 @@ class EchoController
 
     #[Route('/api/nothing', name: 'api_unlisted_tool', methods: ['GET'])]
     #[McpToolRoute]
-    public function nothing(): JsonResponse
+    public function nothing(Request $request): JsonResponse
     {
-        return new JsonResponse(['nothing' => true]);
+        return new JsonResponse(['nothing' => true, 'query' => $request->query->all()]);
     }
 
     #[Route('/api/unlisted', name: 'api_unlisted', methods: ['GET'])]

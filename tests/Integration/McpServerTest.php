@@ -60,6 +60,10 @@ class McpServerTest extends WebTestCase
         $call = $this->rpc('tools/call', ['name' => 'api_echo', 'arguments' => ['word' => 'hey', 'times' => 2]]);
         $this->assertSame(['said' => 'hey hey'], $call['result']['structuredContent'] ?? json_decode($call['result']['content'][0]['text'], true));
 
+        // A GET given what its document does not name: sent in the query, lists included.
+        $read = $this->rpc('tools/call', ['name' => 'api_unlisted_tool', 'arguments' => ['tags' => ['a', 'b'], 'limit' => 3]]);
+        $this->assertSame(['tags' => ['a', 'b'], 'limit' => '3'], ($read['result']['structuredContent'] ?? json_decode($read['result']['content'][0]['text'], true))['query']);
+
         $failed = $this->rpc('tools/call', ['name' => 'api_echo', 'arguments' => ['word' => 'hey', 'times' => 0]]);
         $this->assertTrue($failed['result']['isError']);
         $this->assertStringStartsWith('400:', $failed['result']['content'][0]['text']);

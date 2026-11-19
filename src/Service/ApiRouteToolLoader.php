@@ -223,6 +223,17 @@ final readonly class ApiRouteToolLoader implements LoaderInterface
             $parameters = array_intersect_key($arguments, array_flip($query));
             $body = array_diff_key($arguments, $path, $parameters);
 
+            // A method without a body: what the document does not place goes
+            // in the query, not lost.
+            if (in_array($method, $bodiless, true)) {
+                $parameters += $body;
+                $body = [];
+            }
+
+            // As a URL carries them: strings, lists as `key[]` — what the
+            // action reads from a real request.
+            parse_str(http_build_query($parameters), $parameters);
+
             $server = ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'];
             $main = $requestStack->getMainRequest();
             foreach ($forwarded as $header) {
