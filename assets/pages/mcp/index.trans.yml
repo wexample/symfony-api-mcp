@@ -9,8 +9,10 @@ en:
   no_tools: 'No tool declared yet: the application declares them on its services (#[McpTool]).'
   read_only: 'read only'
   required: 'required'
+  section_arguments: 'Arguments'
   column:
-    tool: 'Tool'
+    name: 'Name'
+    type: 'Type'
     description: 'Description'
 
 fr:
@@ -24,6 +26,8 @@ fr:
   no_tools: 'Aucun outil déclaré pour l''instant : l''application les déclare sur ses services (#[McpTool]).'
   read_only: 'lecture seule'
   required: 'requis'
+  section_arguments: 'Arguments'
   column:
-    tool: 'Outil'
+    name: 'Nom'
+    type: 'Type'
     description: 'Description'

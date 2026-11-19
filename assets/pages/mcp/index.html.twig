@@ -4,6 +4,10 @@
     then the tools it finds there. `server`: url, command, tools
     (McpDocumentationService::describe). -#}
 
+{#- Wide: each tool's arguments beside a call of it, a table and a block of
+    code side by side. -#}
+{%- set page_body_mode = 'large' -%}
+
 {%- block page_body -%}
     <p class="lead">{{ '@page::intro' | trans }}</p>
 
@@ -23,31 +27,46 @@
         {%- if server.tools is empty %}
             <p class="empty">{{ '@page::no_tools' | trans }}</p>
         {%- else %}
-            {#- The whole width: their words are long. -#}
-            {%- set rows = [] -%}
-            {%- for tool in server.tools -%}
-                {%- set description -%}
-                    {%- if tool.title %}<strong>{{ tool.title }}</strong><br>{% endif -%}
-                    {{ tool.description | nl2br }}
-                    {%- if tool.arguments is not empty %}
-                        <ul>
-                            {%- for argument in tool.arguments %}
-                                <li><code>{{ argument.name }}</code> <span class="text-secondary">{{ argument.type }}{% if argument.required %} · {{ '@page::required' | trans }}{% endif %}</span> {{ argument.description }}</li>
-                            {%- endfor %}
-                        </ul>
-                    {%- endif %}
-                {%- endset -%}
-                {%- set rows = rows | merge([{
-                    name: tool.name,
-                    read_only: tool.readOnly ? { type: 'neutral', label: '@page::read_only' | trans } : null,
-                    description: description,
-                }]) -%}
-            {%- endfor -%}
-            {{ data_table([
-                { key: 'name', label: '@page::column.tool' | trans, cell: 'code' },
-                { key: 'read_only', label: '', cell: 'status' },
-                { key: 'description', label: '@page::column.description' | trans, cell: 'html' },
-            ], rows, { fill: true, scroll: true }) }}
+            {#- Every tool at hand, leading to its section. -#}
+            <nav class="cluster" aria-label="{{ '@page::section_tools' | trans }}">
+                {%- for tool in server.tools %}
+                    <a class="text-link" href="#tool-{{ tool.name }}"><code>{{ tool.name }}</code></a>
+                {%- endfor %}
+            </nav>
+
+            {#- A tool as an operation of the api's page is: what it is and
+                takes on one side, a call of it on the other. -#}
+            {%- for tool in server.tools %}
+                <section class="doc-section" id="tool-{{ tool.name }}">
+                    <div class="doc-section--description">
+                        <h3 class="cluster">
+                            <code>{{ tool.name }}</code>
+                            {%- if tool.readOnly %}{{ marker('neutral', '@page::read_only' | trans, { compact: true }) }}{% endif -%}
+                        </h3>
+                        {%- if tool.title %}<p><strong>{{ tool.title }}</strong></p>{% endif %}
+                        {%- if tool.description %}{{ tool.description | markdown }}{% endif %}
+
+                        {%- if tool.arguments is not empty %}
+                            <h4>{{ '@page::section_arguments' | trans }}</h4>
+                            {#- Their words, where the api's document gives some. -#}
+                            {%- set described = tool.arguments | filter(argument => argument.description) is not empty -%}
+                            {{ data_table([
+                                { key: 'name', label: '@page::column.name' | trans, cell: 'code' },
+                                { key: 'type', label: '@page::column.type' | trans, cell: 'code', secondary: true },
+                                { key: 'required', label: '', cell: 'status' },
+                            ] | merge(described ? [{ key: 'description', label: '@page::column.description' | trans }] : []), tool.arguments | map(argument => {
+                                name: argument.name,
+                                type: argument.type,
+                                required: argument.required ? { type: 'neutral', label: '@page::required' | trans } : null,
+                                description: argument.description,
+                            }), { fill: true }) }}
+                        {%- endif %}
+                    </div>
+                    <div class="doc-section--code">
+                        {{ include('@WexampleSymfonyDesignSystemBundle/components/code-block/code-block.html.twig', { lang: 'json', code: tool.example }) }}
+                    </div>
+                </section>
+            {%- endfor %}
         {%- endif %}
     </div>
 {%- endblock -%}
