@@ -59,6 +59,26 @@ final readonly class PeopleTools
 
 `bin/console debug:mcp` lists what a server exposes.
 
+## An api operation as a tool
+
+An action of the api already has its route, its security, its validation and its documentation: `#[McpToolRoute]` serves it as a tool too, nothing written twice.
+
+```php
+use Wexample\SymfonyApiMcp\Attribute\McpToolRoute;
+
+#[Route(path: 'session/create', name: 'v20261_session_create', methods: ['POST'])]
+#[McpToolRoute(name: 'session_create', description: 'Opens a session with a scenario.')]
+public function create(CreateSessionDto $dto /* … */): ApiResponse { /* … */ }
+```
+
+- **Its name**: the attribute's, else the route's.
+- **What it takes**, read from the api's OpenAPI document (symfony-api, NelmioApiDocBundle): the route's path variables, its query parameters, its JSON body's fields — typed, described and required as documented; a path variable the route gives a default to stays optional. Undocumented, the path variables alone, and a body taken as given.
+- **Its description**: the attribute's, else the operation's summary and description.
+- **Called**, the tool calls the action itself in a sub-request of the MCP one: the account of the token that signed the MCP request (its header, and symfony-api's request attribute holding it), the same checks, the same answer — its JSON given back; an error status is the tool's error (`isError`, the status and the api's answer as its text).
+- A `GET` is marked read-only.
+
+Few tools named for what an agent wants to do still read better than one per route: mark the operations an agent has a use for, not every one.
+
 ## Its page
 
 The MCP server has its own page, `/api/doc/mcp`, beside symfony-api's `/api/`, which the application's menu leads to: its address, the command adding it to an agent (`claude mcp add --transport http …`, the token in its header), and each tool — its title, description, arguments, read-only or not. It is read by whoever reads the whole of the api's documentation (`documentation.access_role`).

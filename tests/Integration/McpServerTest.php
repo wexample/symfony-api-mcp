@@ -37,6 +37,34 @@ class McpServerTest extends WebTestCase
         $this->assertSame('Hello Ada.', $call['result']['content'][0]['text']);
     }
 
+    /**
+     * An api action marked #[McpToolRoute]: a tool named after its route,
+     * taking its path variables, calling the action — its answer given
+     * back, an error status said as the tool's error. An action unmarked is
+     * no tool.
+     */
+    public function testAnApiActionMarkedIsATool(): void
+    {
+        $this->rpc('initialize', [
+            'protocolVersion' => '2025-06-18',
+            'capabilities' => new \stdClass(),
+            'clientInfo' => ['name' => 'test', 'version' => '1'],
+        ]);
+        $this->rpc('notifications/initialized', notification: true);
+
+        $tools = array_column($this->rpc('tools/list')['result']['tools'], null, 'name');
+        $this->assertArrayNotHasKey('api_unlisted', $tools);
+        $this->assertSame('Says a word back, as many times as asked.', $tools['api_echo']['description']);
+        $this->assertSame(['word'], $tools['api_echo']['inputSchema']['required']);
+
+        $call = $this->rpc('tools/call', ['name' => 'api_echo', 'arguments' => ['word' => 'hey', 'times' => 2]]);
+        $this->assertSame(['said' => 'hey hey'], $call['result']['structuredContent'] ?? json_decode($call['result']['content'][0]['text'], true));
+
+        $failed = $this->rpc('tools/call', ['name' => 'api_echo', 'arguments' => ['word' => 'hey', 'times' => 0]]);
+        $this->assertTrue($failed['result']['isError']);
+        $this->assertStringStartsWith('400:', $failed['result']['content'][0]['text']);
+    }
+
     public function testThePageSaysWhereHowAndWhichTools(): void
     {
         $documentation = self::getContainer()->get('test.mcp_documentation');
@@ -45,7 +73,10 @@ class McpServerTest extends WebTestCase
         $this->assertStringEndsWith('/api/mcp', $server['url']);
         $this->assertStringContainsString('claude mcp add --transport http', $server['command']);
         $this->assertStringContainsString("--header 'Authorization: Bearer \$TOKEN'", $server['command']);
-        $this->assertSame([['name' => 'name', 'type' => 'string', 'required' => true, 'description' => 'Who to greet']], $server['tools'][0]['arguments']);
+        $tools = array_column($server['tools'], null, 'name');
+        $this->assertSame([['name' => 'name', 'type' => 'string', 'required' => true, 'description' => 'Who to greet']], $tools['greet']['arguments']);
+        // A tool taking nothing: none listed.
+        $this->assertSame([], $tools['api_unlisted_tool']['arguments']);
     }
 
     private function rpc(string $method, array $params = [], bool $notification = false): ?array

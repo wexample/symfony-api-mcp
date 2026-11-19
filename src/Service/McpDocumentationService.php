@@ -47,15 +47,16 @@ final readonly class McpDocumentationService
                 'title' => $tool->annotations?->title ?? $tool->title,
                 'description' => $tool->description,
                 'readOnly' => (bool) $tool->annotations?->readOnlyHint,
+                // A tool taking nothing has its properties as an empty object.
                 'arguments' => array_map(
-                    static fn (string $name, array $schema) => [
+                    static fn (string $name, array|\stdClass $schema) => [
                         'name' => $name,
-                        'type' => is_array($schema['type'] ?? null) ? implode('|', $schema['type']) : ($schema['type'] ?? 'mixed'),
+                        'type' => is_array(((array) $schema)['type'] ?? null) ? implode('|', ((array) $schema)['type']) : (((array) $schema)['type'] ?? 'mixed'),
                         'required' => in_array($name, $tool->inputSchema['required'] ?? [], true),
-                        'description' => $schema['description'] ?? null,
+                        'description' => ((array) $schema)['description'] ?? null,
                     ],
-                    array_keys($tool->inputSchema['properties'] ?? []),
-                    array_values($tool->inputSchema['properties'] ?? [])
+                    array_keys((array) ($tool->inputSchema['properties'] ?? [])),
+                    array_values((array) ($tool->inputSchema['properties'] ?? []))
                 ),
             ], $tools),
         ];

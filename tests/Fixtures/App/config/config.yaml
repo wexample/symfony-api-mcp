@@ -6,6 +6,10 @@ services:
   Wexample\SymfonyApiMcp\Tests\Fixtures\App\Tool\:
     resource: '../Tool/'
 
+  Wexample\SymfonyApiMcp\Tests\Fixtures\App\Controller\:
+    resource: '../Controller/'
+    tags: ['controller.service_arguments']
+
   test.mcp_documentation:
     alias: Wexample\SymfonyApiMcp\Service\McpDocumentationService
     public: true

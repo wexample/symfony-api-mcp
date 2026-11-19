@@ -10,3 +10,7 @@ services:
         tags: ['controller.service_arguments']
 
     Wexample\SymfonyApiMcp\Service\McpDocumentationService: ~
+
+    # The api's actions marked #[McpToolRoute] served as tools: a loader the
+    # MCP bundle runs as it fills the registry (autoconfigured, `mcp.loader`).
+    Wexample\SymfonyApiMcp\Service\ApiRouteToolLoader: ~
