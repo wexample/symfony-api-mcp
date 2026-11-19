@@ -1,7 +1,7 @@
 {
   "name": "wexample/symfony-api-mcp",
   "description": "The application's api as an MCP server, at /api/mcp, its tools declared on services",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "type": "symfony-bundle",
   "license": "MIT",
   "require": {
