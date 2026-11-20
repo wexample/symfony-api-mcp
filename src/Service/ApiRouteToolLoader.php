@@ -37,6 +37,13 @@ final readonly class ApiRouteToolLoader implements LoaderInterface
 
     private const array BODILESS_METHODS = ['GET', 'HEAD', 'DELETE'];
 
+    /**
+     * Set on the MCP request when it calls a tool, the tool's name: what the
+     * request did, for whatever reads it afterwards — an audience counting
+     * the api's calls per tool — without depending on this package.
+     */
+    public const string REQUEST_ATTRIBUTE_TOOL = '_mcp_tool';
+
     public function __construct(
         private RouterInterface $router,
         private HttpKernelInterface $kernel,
@@ -69,7 +76,7 @@ final readonly class ApiRouteToolLoader implements LoaderInterface
                     description: $attribute->description ?? $this->describe($operation, $method, $route),
                     annotations: new ToolAnnotations(readOnlyHint: 'GET' === $method),
                 ),
-                $this->handler($name, $route, $method, $query),
+                $this->handler($name, $attribute->name ?? $name, $route, $method, $query),
             );
         }
     }
@@ -205,7 +212,7 @@ final readonly class ApiRouteToolLoader implements LoaderInterface
     }
 
     /** What the tool runs: the action, called as the api would be. */
-    private function handler(string $name, Route $route, string $method, array $query): Closure
+    private function handler(string $name, string $tool, Route $route, string $method, array $query): Closure
     {
         $pathVariables = $route->compile()->getPathVariables();
         $router = $this->router;
@@ -214,9 +221,10 @@ final readonly class ApiRouteToolLoader implements LoaderInterface
         // Read here: in the reference handler's scope, `self` is not this class.
         $forwarded = self::FORWARDED_HEADERS;
         $bodiless = self::BODILESS_METHODS;
+        $toolAttribute = self::REQUEST_ATTRIBUTE_TOOL;
 
         // Bound to the reference handler's scope: handed the arguments as given.
-        return Closure::bind(static function (array $arguments) use ($name, $method, $query, $pathVariables, $router, $kernel, $requestStack, $forwarded, $bodiless): mixed {
+        return Closure::bind(static function (array $arguments) use ($name, $tool, $method, $query, $pathVariables, $router, $kernel, $requestStack, $forwarded, $bodiless, $toolAttribute): mixed {
             unset($arguments['_session'], $arguments['_request']);
 
             $path = array_intersect_key($arguments, array_flip($pathVariables));
@@ -236,6 +244,7 @@ final readonly class ApiRouteToolLoader implements LoaderInterface
 
             $server = ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'];
             $main = $requestStack->getMainRequest();
+            $main?->attributes->set($toolAttribute, $tool);
             foreach ($forwarded as $header) {
                 if ($main?->headers->has($header)) {
                     $server['HTTP_'.strtoupper(str_replace('-', '_', $header))] = $main->headers->get($header);
